@@ -85,9 +85,8 @@ const mockedBills = {
 }
 
 export default {
-  bills() {
-    return mockedBills
-    //return {}
-  },
-}
+  bills: jest.fn(() => ({
+    list: jest.fn(() => Promise.resolve([])), 
+  })),
+};
 
