@@ -13,7 +13,7 @@ import mockStore from "../__mocks__/store";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-    beforeEach(() => {
+    test("Then the bill icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock });
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
@@ -24,12 +24,11 @@ describe("Given I am connected as an employee", () => {
       router();
       window.onNavigate(ROUTES_PATH.Bills);
       $.fn.modal = jest.fn();
-    });
 
-    test("Then the bill icon in vertical layout should be highlighted", async () => {
       await waitFor(() => screen.getByTestId('icon-window'));
       const windowIcon = screen.getByTestId('icon-window');
-      // expect(windowIcon.classList.contains('active-icon')).toBe(true);
+
+      expect(windowIcon.classList.contains('active-icon')).toBe(true);
     });
 
     test("Then the bills should be ordered from earliest to latest", () => {
@@ -41,6 +40,8 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then the NewBill Button should redirect to New Bill page", async () => {
+      document.body.innerHTML = BillsUI({ data: null });
+
       document.body.innerHTML = BillsUI({ data: bills });
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
