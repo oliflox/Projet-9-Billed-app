@@ -3,7 +3,7 @@ import VerticalLayout from './VerticalLayout.js'
 export default () => {
 
   return (`
-    <div class='layout'>
+    <div class='layout' data-testid="new-bill-page">
       ${VerticalLayout(120)}
       <div class='content'>
         <div class='content-header'>
@@ -55,7 +55,7 @@ export default () => {
                   </div>
                   <div class="col-half">
                     <label for="file" class="bold-label">Justificatif</label>
-                    <input required type="file" class="form-control blue-border" data-testid="file" />
+                    <input type="file" class="form-control blue-border" data-testid="file" />
                   </div>
                 </div>
             </div>
