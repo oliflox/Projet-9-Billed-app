@@ -20,6 +20,7 @@ describe("Given I am on NewBill Page", () => {
       localStorage: localStorageMock,
     });
     jest.spyOn(window, 'alert').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Espionne `console.error`
   });
 
   describe("When I use handleChangeFile", () => {
@@ -46,7 +47,7 @@ describe("Given I am on NewBill Page", () => {
         key: "1234"
       });
 
-      fireEvent.change(fileInput, { target: { files: [validFile] });
+      fireEvent.change(fileInput, { target: { files: [validFile] } });
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -74,7 +75,7 @@ describe("Given I am on NewBill Page", () => {
 
       const fileInput = screen.getByTestId("file");
       const validFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
-      fireEvent.change(fileInput, { target: { files: [validFile] });
+      fireEvent.change(fileInput, { target: { files: [validFile] } });
 
       const form = screen.getByTestId("form-new-bill");
       fireEvent.submit(form);
@@ -98,6 +99,46 @@ describe("Given I am on NewBill Page", () => {
       expect(updateBillSpy).not.toHaveBeenCalled();
 
       consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("When I use handleSubmit and an error occurs", () => {
+    test("Then it should handle 400 error and show a console error", async () => {
+      jest.spyOn(mockStore.bills(), "create").mockRejectedValueOnce({
+        response: { status: 400, message: "Bad Request" }
+      });
+
+      const fileInput = screen.getByTestId("file");
+      const validFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
+      fireEvent.change(fileInput, { target: { files: [validFile] } });
+
+      const form = screen.getByTestId("form-new-bill");
+      fireEvent.submit(form);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(console.error).toHaveBeenCalledWith("Create API call failed", expect.objectContaining({
+        response: expect.objectContaining({ status: 400 })
+      }));
+    });
+
+    test("Then it should handle 500 error and show a console error", async () => {
+      jest.spyOn(mockStore.bills(), "create").mockRejectedValueOnce({
+        response: { status: 500, message: "Internal Server Error" }
+      });
+
+      const fileInput = screen.getByTestId("file");
+      const validFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
+      fireEvent.change(fileInput, { target: { files: [validFile] } });
+
+      const form = screen.getByTestId("form-new-bill");
+      fireEvent.submit(form);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(console.error).toHaveBeenCalledWith("Create API call failed", expect.objectContaining({
+        response: expect.objectContaining({ status: 500 })
+      }));
     });
   });
 });
