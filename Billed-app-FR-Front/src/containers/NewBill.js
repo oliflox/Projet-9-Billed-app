@@ -22,10 +22,8 @@ export default class NewBill {
     if (!file) {
       return;
     }
-  
     const fileName = file.name;
     const fileExtension = fileName.split('.').pop().toLowerCase();
-  
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
     if (!allowedExtensions.includes(fileExtension)) {
       alert('Seuls les fichiers jpg, jpeg, png et gif sont acceptés.');
